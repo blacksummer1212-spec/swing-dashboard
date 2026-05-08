@@ -262,8 +262,8 @@ export default function Dashboard() {
   const unrealizedPct = totalInvested > 0 ? unrealizedPnL / totalInvested * 100 : 0;
   const realizedPnL   = closed.reduce((s, t) => s + t.profitKRW, 0);
   const totalPnL      = unrealizedPnL + realizedPnL;
-  const cash          = totalCapital > 0 ? Math.max(totalCapital - totalInvested, 0) : 0;
-  const cashPct       = totalCapital > 0 ? cash / totalCapital * 100 : 0;
+  const cash          = totalCapital > 0 ? Math.max(totalCapital + realizedPnL - totalInvested, 0) : 0;
+  const cashPct       = totalCapital > 0 ? cash / Math.max(totalCapital + totalPnL, totalCapital) * 100 : 0;
 
   const judged  = closed.filter(t => t.result === '승' || t.result === '패');
   const wins    = judged.filter(t => t.result === '승').length;

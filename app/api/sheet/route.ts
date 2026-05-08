@@ -40,21 +40,23 @@ export async function GET() {
       const exitStr   = c[11] || '';
       const profitStr = c[15] || '';
       const noteStr   = c[18] || '';
+      const market    = c[3]  || '';
+      const isUS      = market === '미국';
 
       trades.push({
         num:        parseInt(c[0]) || 0,
         date:       c[1]  || '',
         name:       c[2]  || '',
-        market:     c[3]  || '',
+        market,
         sector:     c[4]  || '',
         direction:  c[6]  || '',
         amountKRW:  parseNum(c[7] || ''),
         entryStr,
         entryPrice: parseNum(entryStr),
-        entryIsUSD: entryStr.includes('달러') || entryStr.includes('$'),
+        entryIsUSD: isUS ? !entryStr.includes('원') : (entryStr.includes('달러') || entryStr.includes('$')),
         stopStr,
         stopPrice:  parseNum(stopStr),
-        stopIsUSD:  stopStr.includes('달러') || stopStr.includes('$'),
+        stopIsUSD:  isUS ? !stopStr.includes('원') : (stopStr.includes('달러') || stopStr.includes('$')),
         exitStr,
         result:     c[12] || '',
         holdDays:   c[14] || '',
