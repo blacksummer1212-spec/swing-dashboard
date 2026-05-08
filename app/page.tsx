@@ -235,7 +235,7 @@ export default function Dashboard() {
           currentStr = `${Math.round(cur).toLocaleString()}원`;
         }
 
-        return { ...t, currentStr, pnlPct, pnlKRW: t.amountKRW * pnlPct / 100 };
+        return { ...t, currentStr, pnlPct, pnlKRW: Math.round(t.amountKRW * pnlPct / 100) };
       });
 
       setTrades(enriched);
@@ -333,7 +333,7 @@ export default function Dashboard() {
           <div className="flex items-center gap-3">
             <span className="text-sm font-medium w-20 shrink-0" style={{ color: '#8b949e' }}>최종 자본</span>
             <span className="text-sm font-bold tabular-nums" style={{ color: totalPnL >= 0 ? '#3fb950' : '#f85149' }}>
-              {(totalCapital + totalPnL).toLocaleString()}원
+              {Math.round(totalCapital + totalPnL).toLocaleString()}원
             </span>
             <span className="text-sm" style={{ color: '#8b949e' }}>
               ({fmtKorean(totalCapital + totalPnL)})
