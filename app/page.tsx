@@ -258,9 +258,9 @@ export default function Dashboard() {
   const closed = trades.filter(t => !t.isOpen);
 
   const totalInvested = open.reduce((s, t) => s + t.amountKRW, 0);
-  const unrealizedPnL = open.reduce((s, t) => s + (t.pnlKRW ?? 0), 0);
+  const unrealizedPnL = Math.round(open.reduce((s, t) => s + (t.pnlKRW ?? 0), 0));
   const unrealizedPct = totalInvested > 0 ? unrealizedPnL / totalInvested * 100 : 0;
-  const realizedPnL   = closed.reduce((s, t) => s + t.profitKRW, 0);
+  const realizedPnL   = Math.round(closed.reduce((s, t) => s + t.profitKRW, 0));
   const totalPnL      = unrealizedPnL + realizedPnL;
   const cash          = totalCapital > 0 ? Math.max(totalCapital + realizedPnL - totalInvested, 0) : 0;
   const cashPct       = totalCapital > 0 ? cash / Math.max(totalCapital + totalPnL, totalCapital) * 100 : 0;

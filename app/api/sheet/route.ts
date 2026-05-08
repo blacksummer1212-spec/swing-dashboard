@@ -60,7 +60,7 @@ export async function GET() {
         exitStr,
         result:     c[12] || '',
         holdDays:   c[14] || '',
-        profitKRW:  parseNum(profitStr),
+        profitKRW:  Math.round(parseNum(profitStr)),
         isOpen:     !exitStr.trim(),
         isPaper:    noteStr.includes('페이퍼'),
       });
