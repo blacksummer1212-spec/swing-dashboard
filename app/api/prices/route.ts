@@ -29,6 +29,23 @@ async function fetchYahoo(ticker: string): Promise<number | null> {
   }
 }
 
+async function fetchUpbit(name: string): Promise<number | null> {
+  try {
+    const upper = name.toUpperCase();
+    const symbol = upper.endsWith('KRW') ? upper.slice(0, -3) : upper;
+    const url = `https://api.upbit.com/v1/ticker?markets=KRW-${encodeURIComponent(symbol)}`;
+    const res = await fetch(url, {
+      headers: { Accept: 'application/json' },
+      next: { revalidate: 300 },
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data?.[0]?.trade_price ?? null;
+  } catch {
+    return null;
+  }
+}
+
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const names   = (searchParams.get('names')   || '').split(',').filter(Boolean);
@@ -41,10 +58,16 @@ export async function GET(req: NextRequest) {
   await Promise.all(
     names.map(async (name, i) => {
       const market = markets[i] || '';
-      let ticker: string | null = null;
-      if (market === '미국') ticker = name.trim();
-      else if (market === '한국') ticker = KR_TICKERS[name.trim()] || null;
-      result[name] = ticker ? await fetchYahoo(ticker) : null;
+      if (market === '미국') {
+        result[name] = await fetchYahoo(name.trim());
+      } else if (market === '한국') {
+        const ticker = KR_TICKERS[name.trim()] || null;
+        result[name] = ticker ? await fetchYahoo(ticker) : null;
+      } else if (market === '코인') {
+        result[name] = await fetchUpbit(name.trim());
+      } else {
+        result[name] = null;
+      }
     })
   );
 
