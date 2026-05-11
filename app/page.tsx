@@ -138,7 +138,7 @@ function DonutChart({ segments, total }: { segments: Segment[]; total: number })
   const hPct = h ? (h.seg.value / total * 100).toFixed(1) : null;
 
   return (
-    <svg viewBox="0 0 360 360" width={360} height={360} style={{ flexShrink: 0 }}>
+    <svg viewBox="0 0 360 360" className="w-full max-w-[200px] md:max-w-[360px]">
       {arcs.map((arc, i) => (
         <path
           key={i}
@@ -285,7 +285,7 @@ export default function Dashboard() {
       {/* 헤더 */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold" style={{ color: '#58a6ff' }}>스윙트레이딩 포트폴리오</h1>
+          <h1 className="text-xl md:text-2xl font-bold" style={{ color: '#58a6ff' }}>스윙트레이딩 포트폴리오</h1>
           <p className="text-xs mt-1" style={{ color: '#8b949e' }}>
             {updatedAt ? `업데이트 ${updatedAt.toLocaleTimeString('ko-KR')}` : '로딩 중...'}
             {usdkrw && ` · USD/KRW ${Math.round(usdkrw).toLocaleString()}원`}
@@ -319,7 +319,7 @@ export default function Dashboard() {
             onBlur={commitCapital}
             onKeyDown={e => e.key === 'Enter' && commitCapital()}
             placeholder="예: 200000000 · 2억 · 5000만"
-            className="rounded-md px-3 py-1.5 text-sm w-56 outline-none"
+            className="rounded-md px-3 py-1.5 text-sm w-full sm:w-56 outline-none"
             style={{ background: '#21262d', color: '#e6edf3', border: '1px solid #30363d' }}
           />
           {totalCapital > 0 && (
@@ -391,18 +391,18 @@ export default function Dashboard() {
 
       {/* 포트폴리오 파이 차트 + 오픈 포지션 카드 */}
       <div className="rounded-lg p-5 mb-6" style={card}>
-        {/* 타이틀 행 — 양쪽 제목 같은 줄 */}
-        <div className="flex mb-4">
-          <h2 className="text-sm font-semibold w-1/2" style={{ color: '#58a6ff' }}>포트폴리오 구성</h2>
-          <h2 className="text-sm font-semibold w-1/2 pl-6" style={{ color: '#58a6ff' }}>오픈 포지션</h2>
+        {/* 타이틀 행 */}
+        <div className="flex flex-col md:flex-row mb-4 gap-1 md:gap-0">
+          <h2 className="text-sm font-semibold md:w-1/2" style={{ color: '#58a6ff' }}>포트폴리오 구성</h2>
+          <h2 className="text-sm font-semibold md:w-1/2 md:pl-6" style={{ color: '#58a6ff' }}>오픈 포지션</h2>
         </div>
 
-        {/* 컨텐츠 — 세로 회색 구분선 */}
-        <div className="flex">
-          {/* 왼쪽: 도넛 + 범례 — 수직 중앙 */}
-          <div className="w-1/2 flex items-center justify-center gap-4">
+        {/* 컨텐츠 */}
+        <div className="flex flex-col md:flex-row">
+          {/* 왼쪽: 도넛 + 범례 */}
+          <div className="w-full md:w-1/2 flex flex-col sm:flex-row items-center justify-center gap-4">
             <DonutChart segments={pieSegments} total={pieTotal} />
-            <div className="flex flex-col gap-2.5" style={{ minWidth: 180 }}>
+            <div className="flex flex-col gap-2.5 w-full sm:w-auto">
               {pieSegments.map(seg => {
                 const pct = pieTotal > 0 ? seg.value / pieTotal * 100 : 0;
                 return (
@@ -418,11 +418,12 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* 세로 구분선 */}
-          <div style={{ width: 1, background: '#30363d', flexShrink: 0 }} />
+          {/* 구분선: 모바일=가로, 데스크탑=세로 */}
+          <div className="h-px my-4 md:hidden" style={{ background: '#30363d' }} />
+          <div className="hidden md:block" style={{ width: 1, background: '#30363d', flexShrink: 0 }} />
 
           {/* 오른쪽: 오픈 포지션 */}
-          <div className="w-1/2 pl-6 flex flex-col gap-3">
+          <div className="w-full md:w-1/2 md:pl-6 flex flex-col gap-3">
             {open.length === 0 ? (
               <p className="text-sm" style={{ color: '#8b949e' }}>{loading ? '데이터 조회 중...' : '오픈 포지션 없음'}</p>
             ) : open.map(t => {
