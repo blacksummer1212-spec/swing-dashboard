@@ -12,7 +12,8 @@ const KR_TICKERS: Record<string, string> = {
   '카카오':         '035720.KS',
   'LG에너지솔루션': '373220.KS',
   '셀트리온':       '068270.KS',
-  'DB하이텍':       '000990.KS',
+  'DB하이텍':         '000990.KS',
+  '레인보우로보틱스': '277810.KQ',
 };
 
 async function fetchYahoo(ticker: string): Promise<number | null> {

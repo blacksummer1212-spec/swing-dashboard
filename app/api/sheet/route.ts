@@ -35,11 +35,11 @@ export async function GET() {
       const c = parseCSVLine(lines[i]);
       if (!c[0] || !c[0].trim() || isNaN(parseInt(c[0]))) continue;
 
-      const entryStr  = c[8]  || '';
-      const stopStr   = c[9]  || '';
-      const exitStr   = c[11] || '';
-      const profitStr = c[15] || '';
-      const noteStr   = c[18] || '';
+      const entryStr  = c[7]  || '';
+      const stopStr   = c[8]  || '';
+      const exitStr   = c[10] || '';
+      const profitStr = c[14] || '';
+      const noteStr   = c[17] || '';
       const market    = c[3]  || '';
       const isUS      = market === '미국';
 
@@ -49,8 +49,8 @@ export async function GET() {
         name:       c[2]  || '',
         market,
         sector:     c[4]  || '',
-        direction:  c[6]  || '',
-        amountKRW:  parseNum(c[7] || ''),
+        direction:  c[5]  || '',
+        amountKRW:  parseNum(c[6] || ''),
         entryStr,
         entryPrice: parseNum(entryStr),
         entryIsUSD: isUS ? !entryStr.includes('원') : (entryStr.includes('달러') || entryStr.includes('$')),
@@ -58,8 +58,8 @@ export async function GET() {
         stopPrice:  parseNum(stopStr),
         stopIsUSD:  isUS ? !stopStr.includes('원') : (stopStr.includes('달러') || stopStr.includes('$')),
         exitStr,
-        result:     c[12] || '',
-        holdDays:   c[14] || '',
+        result:     c[11] || '',
+        holdDays:   c[13] || '',
         profitKRW:  Math.round(parseNum(profitStr)),
         isOpen:     !exitStr.trim(),
         isPaper:    noteStr.includes('페이퍼'),
