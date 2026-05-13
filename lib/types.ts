@@ -2,6 +2,7 @@ export interface Trade {
   num: number;
   date: string;
   name: string;
+  ticker: string;
   market: string;
   sector: string;
   direction: string;

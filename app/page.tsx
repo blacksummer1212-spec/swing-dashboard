@@ -210,16 +210,16 @@ export default function Dashboard() {
       const rawTrades: Trade[] = await sheetRes.json();
 
       const openTrades = rawTrades.filter(t => t.isOpen);
-      const names   = openTrades.map(t => t.name).join(',');
+      const tickers = openTrades.map(t => t.ticker).join(',');
       const markets = openTrades.map(t => t.market).join(',');
 
-      const priceRes  = await fetch(`/api/prices?names=${encodeURIComponent(names)}&markets=${encodeURIComponent(markets)}`);
+      const priceRes  = await fetch(`/api/prices?tickers=${encodeURIComponent(tickers)}&markets=${encodeURIComponent(markets)}`);
       const priceData: Prices = await priceRes.json();
       const usdkrw = priceData['USDKRW'] ?? 1380;
 
       const enriched = rawTrades.map(t => {
         if (!t.isOpen) return t;
-        const cur = priceData[t.name];
+        const cur = priceData[t.ticker];
         if (cur == null) return { ...t, currentStr: '조회 실패' };
 
         const dir = t.direction === '롱' ? 1 : -1;

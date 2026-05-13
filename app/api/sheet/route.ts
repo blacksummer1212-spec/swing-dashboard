@@ -35,22 +35,23 @@ export async function GET() {
       const c = parseCSVLine(lines[i]);
       if (!c[0] || !c[0].trim() || isNaN(parseInt(c[0]))) continue;
 
-      const entryStr  = c[7]  || '';
-      const stopStr   = c[8]  || '';
-      const exitStr   = c[10] || '';
-      const profitStr = c[14] || '';
-      const noteStr   = c[17] || '';
-      const market    = c[3]  || '';
+      const entryStr  = c[8]  || '';
+      const stopStr   = c[9]  || '';
+      const exitStr   = c[11] || '';
+      const profitStr = c[15] || '';
+      const noteStr   = c[18] || '';
+      const market    = c[4]  || '';
       const isUS      = market === '미국';
 
       trades.push({
         num:        parseInt(c[0]) || 0,
         date:       c[1]  || '',
         name:       c[2]  || '',
+        ticker:     c[3]  || '',
         market,
-        sector:     c[4]  || '',
-        direction:  c[5]  || '',
-        amountKRW:  parseNum(c[6] || ''),
+        sector:     c[5]  || '',
+        direction:  c[6]  || '',
+        amountKRW:  parseNum(c[7] || ''),
         entryStr,
         entryPrice: parseNum(entryStr),
         entryIsUSD: isUS ? !entryStr.includes('원') : (entryStr.includes('달러') || entryStr.includes('$')),

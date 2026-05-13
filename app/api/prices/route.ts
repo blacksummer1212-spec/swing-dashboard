@@ -1,21 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const KR_TICKERS: Record<string, string> = {
-  'SK하이닉스':     '000660.KS',
-  '삼성전자':       '005930.KS',
-  '삼성물산':       '028260.KS',
-  'LG화학':         '051910.KS',
-  'POSCO홀딩스':    '005490.KS',
-  'KB금융':         '105560.KS',
-  '현대차':         '005380.KS',
-  'NAVER':          '035420.KS',
-  '카카오':         '035720.KS',
-  'LG에너지솔루션': '373220.KS',
-  '셀트리온':       '068270.KS',
-  'DB하이텍':         '000990.KS',
-  '레인보우로보틱스': '277810.KQ',
-};
-
 async function fetchYahoo(ticker: string): Promise<number | null> {
   try {
     const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}?interval=1d&range=1d`;
@@ -31,9 +15,9 @@ async function fetchYahoo(ticker: string): Promise<number | null> {
   }
 }
 
-async function fetchUpbit(name: string): Promise<number | null> {
+async function fetchUpbit(ticker: string): Promise<number | null> {
   try {
-    const upper = name.toUpperCase();
+    const upper = ticker.toUpperCase();
     const symbol = upper.endsWith('KRW') ? upper.slice(0, -3) : upper;
     const url = `https://api.upbit.com/v1/ticker?markets=KRW-${encodeURIComponent(symbol)}`;
     const res = await fetch(url, {
@@ -50,7 +34,7 @@ async function fetchUpbit(name: string): Promise<number | null> {
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
-  const names   = (searchParams.get('names')   || '').split(',').filter(Boolean);
+  const tickers = (searchParams.get('tickers') || '').split(',').filter(Boolean);
   const markets = (searchParams.get('markets') || '').split(',').filter(Boolean);
 
   const result: Record<string, number | null> = {};
@@ -58,17 +42,21 @@ export async function GET(req: NextRequest) {
   result['USDKRW'] = await fetchYahoo('USDKRW=X');
 
   await Promise.all(
-    names.map(async (name, i) => {
+    tickers.map(async (ticker, i) => {
       const market = markets[i] || '';
-      if (market === '미국') {
-        result[name] = await fetchYahoo(name.trim());
+      const t = ticker.trim();
+      if (market === '코인') {
+        result[ticker] = await fetchUpbit(t);
       } else if (market === '한국') {
-        const ticker = KR_TICKERS[name.trim()] || null;
-        result[name] = ticker ? await fetchYahoo(ticker) : null;
-      } else if (market === '코인') {
-        result[name] = await fetchUpbit(name.trim());
+        // suffix 없는 6자리 코드면 .KS → .KQ 순으로 시도
+        if (!t.includes('.')) {
+          const ks = await fetchYahoo(`${t}.KS`);
+          result[ticker] = ks ?? await fetchYahoo(`${t}.KQ`);
+        } else {
+          result[ticker] = await fetchYahoo(t);
+        }
       } else {
-        result[name] = null;
+        result[ticker] = await fetchYahoo(t);
       }
     })
   );
